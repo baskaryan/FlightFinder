@@ -1,0 +1,42 @@
+Design
+
+First, let me explain what Flightfinder does.  Flightfinder searches for cheaper ways to fly from point A
+to point B by searching for some intermediary point C, to which it is very cheap to fly from point A and 
+from which it is very cheap to fly to point B.  So cheap, that these two flights combined are cheaper than 
+any flight from point A to point B that any other search engine might show you.  It can also search for a 
+point D, such that you go through point C on the way to your destination, and through point D on the way 
+back from your destination. And that’s basically Flightfinder.
+
+At the crux of Flightfinder is the lookup function (found in helpers.py and command-program.py); basically, 
+it finds the cheapest set of flights originating at point A, and then checks to see for every element in 
+that set whether the cost of the flight from A to the element and the cost from the element to B is cheaper 
+than the cost of any pre-made flight from A to B.  If any such elements exist, then we’ve found our point 
+C(s) that we were looking for.
+
+So how exactly is this done in lookup()? First, we check if a return date was given for the flight.  If not, 
+then we have a one-way flight.  If it was given, then we have a round-trip flight.  Luckily, the design for 
+both these types of flight is fairly similar thanks to the Amadeus Travel Innovation Sandbox.  Using this free 
+API, for both the routes we first find the price of the cheapest regular flight from A to B.  Then we use a 
+neat feature of the API, the Inspiration Search, to find a list of all of the flights from A to any destination 
+under that price of the regular flight (it’s actually under the price of the regular flight minus 50, since 
+it’s safe to assume that we won’t find too many flights under $50).  Once we have this list of potential Cs 
+(the cheap connection points), we can iterate through them.  For each connection point, we look up all the 
+flights from point A to point the connection and all the flights from the connection to point B, and then we 
+iterate over these flights to see if any of them have the right combination of prices and times (that is, the 
+sum of the prices is less than the price of the cheapest regular flight and the times are such that a person 
+could actually both flights).  If they do, we add them to a list of routes, where each route is stored as a 
+dict containing the key connection city and the total price of the route.
+
+Now, at this point there are two different codes that we must consider.  As mentioned in the documentation, this 
+software contains both the backend of a website and a command-line program.  This is because the API (being free) 
+is so slow and cumbersome that it often crashes the website, even though the underlying code works and gets the 
+right results.  That’s why I’ve added in a command-line version of the program, which does more extensive search 
+and never crashes.
+
+Now the website code (found in application.py and helper.py), simply checks if the user input a return date or 
+not and based on that does a round-trip or one-way search and returns the results.  Furthermore, the lookup function 
+in helpers.py stops searching for flights in a particular city once it has found one flight.
+
+The command-program.py on the other hand, uses lookup several times to get not only round-trip combinations to 
+find a round-trip flight, but also looks as stiching together up to four one-way flights to get a person to point 
+B and back. 

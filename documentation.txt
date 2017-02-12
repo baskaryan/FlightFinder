@@ -1,0 +1,80 @@
+Documentation
+
+First, let me explain what Flightfinder does.  Flightfinder searches for cheaper ways to fly from point A 
+to point B by searching for some intermediary point C, to which it is very cheap to fly from point A and 
+from which it is very cheap to fly to point B.  So cheap, that these two flights combined are cheaper than 
+any flight from point A to point B that any other search engine might show you.  It can also search for a 
+point D, such that you go through point C on the way to your destination, and through point D on the way 
+back from your destination. And that’s basically Flightfinder.
+
+Now, to get started, download the entire “project” folder from github into your CS50 IDE ~/workspace.  Run 
+the following code in your terminal:
+
+$ cd project/flightfinder
+
+So that you see the following:
+
+~/workspace/project/flightfinder/ $
+
+Next you will have to either get an API key at https://sandbox.amadeus.com/api-catalog by following the instructions 
+at the top (you will have to register), or you can use my API key: 4kLFYfEgqIjGCLli8wtsKYYOAZJG4QCg.  Keep in mind 
+that I only have a temporary key with a monthly quota for queries, so this key will not last forever.  Once you have 
+an API key, run the following:
+
+$ export API_KEY={insert the API key here}
+
+Now you have two options as to how you may use this software.  There is the website portion and the command line 
+program.  To use the website, run the following:
+
+$ flask run
+
+Click on CS50 IDE in the top left corner and then click on “Web Server”.  This should take you to the website 
+home page, which has the search engine.  Once here you will see four search parameters: An origin, a destination, 
+a departure date, and a return date.  The return date is the only optional parameter; if you leave it out you will 
+only get one-way flights.  The origin and destination inputs must be entered as the IATA codes of either the 
+cities or airports you are looking for.  IATA codes are those three-letter codes that you see in big letters on 
+your luggage tags when flying.  They are generally fairly straightforward (San Francisco: SFO, New York City: NYC, 
+Boston: BOS, etc.).  This is not always the case, however (Dallas: DWI); in such cases, a simple google search with 
+the city or airport name and “IATA code” should give you what you’re looking for.  Once you have the codes, you 
+simply need to input the date(s).  Dates must be in a YYYY-MM-DD format.  Again, if you leave out the return date 
+you will get one-way flights.
+
+Now just press the search button.  You may have to wait a couple minutes, but hopefully you will get your results 
+soon enough.  If there are any alternate routes (i.e. cheaper routes) to your destination, you will see a list of 
+cities and prices.  The cities are the connection points through which you could travel, and the prices are the 
+total prices for trips that go through those cities.  If a city pops up more than once, that means there’s more 
+than one possible flight route through that city.  At the top of the page is the cheapest regular, one-airline flight 
+for your given dates and places so that you may compare it with the given alternate routes.  
+
+Unfortunately, the search will not always work.  The website often crashes.  This is because I am using a free 
+API that is particularly cumbersome, and either the sheer number of calls to the API or the length of time that 
+each API call takes (each one takes at least several seconds) causes the site to eventually crash on any of the 
+more involved searches.
+
+Luckily, the website crashes not because of a software error but because of some error between servers.  That is, 
+the underlying code works, it’s just that the website can’t always handle it.  That’s why there is also a command-line 
+program within the file, which does the same exact thing as the website but better.  To try and limit how often the 
+site crashed, I actually had to minimize the scope of the searches when the searches were being done through the site.  
+With the command-line program the searches can be completely thorough.
+
+To run the command line program, either open up a new terminal or press ‘ctrl’ and ‘c’ (for macs) in your current 
+terminal to stop running flask. Make sure you are still in the project folder and in flightfinder.  Also, just in 
+case run the following code again:
+
+$ export API_KEY={insert the API key here}
+
+Now run:
+
+$ python command-program.py
+
+At this point, you will be prompted, one by one, for an origin, a destination, a departure date, and a return date.  
+The formats are exactly the same as the first time, and if you don’t want to input a return date simply hit return.  
+Once you have input all necessary fields, the search will begin.  Again, this will take several minutes.  If there 
+are no alternate routes, you will see a message in your terminal saying as much.  If there results, however, you will 
+see a printed list of dict objects.  If you did a one-way search, each object will have (just like on the site) a 
+city and a price.  If you did a round-trip search, you will see potentially two sets of lists of dicts, separated by 
+a line of dashes.  It is also possible that one of the sets is empty and will simply say None.  The set above the line 
+will be in the same format as the one-way flights: a city and a price.  If there is a list below the line, it will have 
+a slightly different format.  It will have two cities: an outCity and an inCity.  This is because these results are ways 
+that you can achieve a round-trip flight through a combination of one-way routes going through the outCity on the way to 
+your destination and through the inCity on the way back from your destination.

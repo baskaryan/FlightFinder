@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>jQuery UI Autocomplete - Remote JSONP datasource</title>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+        <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+        <style>
+            #city { width: 20em; }
+        </style>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </head>
+    <body>
+        <div class="ui-widget">
+        <label for="city">Your city: </label>
+        <input id="city">
+        </div>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block main %}
+   
+    <form action="{{ url_for('search') }}" method="post">
+        <fieldset>
+            <br></br>
+            <div> <font size = 5><strong> The cheapest way to fly </strong></font></div>
+            <br></br>
+            <div class="form-group">
+               <strong> Origin :</strong>  <input class="form-control" name="origin" placeholder="IATA Code" type="text"/>
+                &nbsp; <strong>Destination :</strong>  <input autocomplete="off" autofocus class="form-control" name="destination" placeholder="IATA code" type="text"/>
+            </div>
+            <div class="form-group">
+                <strong>Depart :</strong> <input class="form-control" name="depart" placeholder="YYYY-MM-DD" type="text"/>
+                &emsp; &emsp;&nbsp;&nbsp; Return : <input autocomplete="off" class="form-control" name="returnDate" placeholder="YYYY-MM-DD" type="text"/>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" type="submit">Search</button>
+            </div>
+        </fieldset>
+    </form>
+    
+{% endblock %}

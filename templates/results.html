@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search Results
+{% endblock %}
+
+{% block main %}
+   
+    <font size=5>
+         Price of Cheapest Regular Flight: ${{price}}
+    </font>
+    <table class="table table-striped">
+        <caption>Alternate Flight Routes</caption>
+        <thead>
+            <tr>
+                <th>Connection City</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in results %}
+                <tr>
+                    <td>{{flight["city"]}}</td>
+                    <td>${{flight["price"]}}</td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+{% endblock %}

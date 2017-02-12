@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search Results
+{% endblock %}
+
+{% block main %}
+   
+    <p>
+         Price of Cheapest Traditional Flight: ${{price}}
+    </p>
+    <table class="table table-striped">
+        <caption>Alternate Flight Routes, Round Trip Combos</caption>
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in roundResults %}
+                <tr>
+                    <td>{{flight["city"]}}</td>
+                    <td>${{flight["price"]}}</td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+        <table class="table table-striped">
+        <caption>Alternate Flight Routes, One-Way Combos</caption>
+        <thead>
+            <tr>
+                <th>Outbound City</th>
+                <th>Inbound City</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in oneResults %}
+                <tr>
+                    <td>{{flight["outCity"]}}</td>
+                    <td>{{flight["inCity"]}}</td>
+                    <td>${{flight["price"]}}</td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+{% endblock %}
