@@ -14,13 +14,13 @@ key = os.environ.get("API_KEY")
 def lookup(origin, destination, departDate, returnDate=None):
     """Look up flight routes given dates and places"""
     
-    if not returnDate:
-        control = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&number_of_results=1&apikey={}".format(origin, destination, departDate, key))
+    if not returnDate: 
+        control = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&number_of_results=1&apikey={}".format(origin, destination, departDate, key))
         if control.status_code != 200:
             return None, None
         originalPrice = int(float(control.json()['results'][0]['fare']['total_price']))
         
-        firstList = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/inspiration-search?origin={}&departure_date={}&one-way=true&max_price={}&apikey={}".format(origin, departDate, originalPrice-50, key))
+        firstList = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/inspiration-search?origin={}&departure_date={}&one-way=true&max_price={}&apikey={}".format(origin, departDate, originalPrice-50, key))
         if firstList.status_code != 200:
             return None, None        
         
@@ -28,12 +28,12 @@ def lookup(origin, destination, departDate, returnDate=None):
         for flight in firstList.json()['results']:
             code = flight['destination']
             firstMinPrice = int(float(flight['price']))
-            second = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&max_price={}&apikey={}".format(code, destination, departDate, originalPrice-firstMinPrice, key))
+            second = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&max_price={}&apikey={}".format(code, destination, departDate, originalPrice-firstMinPrice, key))
             
             if second.status_code == 200:
                 secondFlight = second.json()
                 secondMinPrice = int(float(secondFlight['results'][0]['fare']['total_price']))
-                first = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&max_price={}&apikey={}".format(origin, code, departDate, originalPrice-secondMinPrice, key))
+                first = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&max_price={}&apikey={}".format(origin, code, departDate, originalPrice-secondMinPrice, key))
                 
                 if first.status_code == 200:
                     firstFlight = first.json()
@@ -47,7 +47,7 @@ def lookup(origin, destination, departDate, returnDate=None):
                             secondOutTime = datetime.strptime(layover['itineraries'][0]['outbound']['flights'][0]['departs_at'], "%Y-%m-%dT%H:%M")
                             
                             if (firstPrice + secondPrice < originalPrice and firstOutTime < secondOutTime):
-                                city = requests.get("http://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(code, key)).json()['city']['name']
+                                city = requests.get("https://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(code, key)).json()['city']['name']
                                 flights.append({'city': city, 'price': firstPrice + secondPrice})
                             elif (firstPrice + secondPrice >= originalPrice):
                                 break
@@ -58,11 +58,11 @@ def lookup(origin, destination, departDate, returnDate=None):
         if len(flights) == 0:
             return None, None
         else:
-            results = sorted(flights, key=lambda flight: flight['price'])  
+            results = sorted(flights, key=lambda x: x['price'])  
             return results, originalPrice
         
     else:
-        control = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&return_date={}&number_of_results=1&apikey={}".format(origin, destination, departDate, returnDate, key))
+        control = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&return_date={}&number_of_results=1&apikey={}".format(origin, destination, departDate, returnDate, key))
         if control.status_code != 200:
             return None, None
         originalPrice = int(float(control.json()['results'][0]['fare']['total_price']))
@@ -70,7 +70,7 @@ def lookup(origin, destination, departDate, returnDate=None):
         departD = date(int(departDate[:4]), int(departDate[5:7]), int(departDate[8:]))
         returnD = date(int(returnDate[:4]), int(returnDate[5:7]), int(returnDate[8:]))
         duration = (returnD - departD).days
-        firstList = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/inspiration-search?origin={}&departure_date={}&duration={}&max_price={}&apikey={}".format(origin, departDate, duration, originalPrice-75, key))
+        firstList = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/inspiration-search?origin={}&departure_date={}&duration={}&max_price={}&apikey={}".format(origin, departDate, duration, originalPrice-75, key))
         if firstList.status_code != 200:
             return None, None
         
@@ -78,12 +78,12 @@ def lookup(origin, destination, departDate, returnDate=None):
         for flight in firstList.json()['results']:
             code = flight['destination']
             firstMinPrice = int(float(flight['price']))
-            second = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&return_date={}&number_of_results=5&max_price={}&apikey={}".format(code, destination, departDate, returnDate, originalPrice-firstMinPrice, key))
+            second = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&return_date={}&number_of_results=5&max_price={}&apikey={}".format(code, destination, departDate, returnDate, originalPrice-firstMinPrice, key))
             
             if second.status_code == 200:
                 secondFlight = second.json()
                 secondMinPrice = int(float(secondFlight['results'][0]['fare']['total_price']))
-                first = requests.get("http://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&return_date={}&max_price={}&number_of_results=5&apikey={}".format(origin, code, departDate, returnDate, originalPrice-secondMinPrice, key))
+                first = requests.get("https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?origin={}&destination={}&departure_date={}&return_date={}&max_price={}&number_of_results=5&apikey={}".format(origin, code, departDate, returnDate, originalPrice-secondMinPrice, key))
                 
                 if first.status_code == 200:
                     firstFlight = first.json()
@@ -99,7 +99,7 @@ def lookup(origin, destination, departDate, returnDate=None):
                             secondInTime = datetime.strptime(layover['itineraries'][0]['inbound']['flights'][len(layover['itineraries'][0]['inbound']['flights'])-1]['arrives_at'], "%Y-%m-%dT%H:%M")
                             
                             if (firstPrice + secondPrice < originalPrice and firstOutTime < secondOutTime and secondInTime < firstInTime):
-                                city = requests.get("http://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(code, key)).json()['city']['name']
+                                city = requests.get("https://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(code, key)).json()['city']['name']
                                 flights.append({'city': city, 'price': firstPrice + secondPrice})
                             elif (firstPrice + secondPrice >= originalPrice):
                                 break
@@ -110,7 +110,7 @@ def lookup(origin, destination, departDate, returnDate=None):
         if len(flights) == 0:
             return None, None
         else:
-            results = sorted(flights, key=lambda flight: flight['price'])  
+            results = sorted(flights, key=lambda x: x['price'])  
             return results, originalPrice
 
 
@@ -167,14 +167,16 @@ def combineOneWay(outResults, outPrice, inResults, inPrice, roundPrice):
 while True:
     origin = input("Origin*: ")
     if origin:
-        originCheck = requests.get("http://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(origin, key))
+        originCheck = requests.get("https://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(origin, key))
         if originCheck.status_code == 200:
             break
+        else:
+            print(str(originCheck.status_code))
 # get valid destination      
 while True:
     destination = input("Destination*: ")
     if destination:
-        destinationCheck = requests.get("http://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(destination, key))
+        destinationCheck = requests.get("https://api.sandbox.amadeus.com/v1.2/location/{}/?apikey={}".format(destination, key))
         if destinationCheck.status_code == 200:
             break
 # get valid departure date
@@ -216,11 +218,11 @@ if returnDate:
     roundOneWay = combineOneWay(outResults, outPrice, inResults, inPrice, roundPrice)
     # if there are no results
     if roundResults == None and roundOneWay == None:
-        print("Sorry, no cheaper round-trip routes")
+        print("Sorry, no cheaper round-trip routes than regular price: $" + str(roundPrice))
     # otherwise print out results
     else:
         print("________________________")
-        print("REGULAR PRICE: " + str(roundPrice))
+        print("REGULAR PRICE: $" + str(roundPrice))
         print("________________________")
         print(roundResults)
         print("________________________")
@@ -229,7 +231,7 @@ if returnDate:
 else:
     # if there are no results
     if outResults == None:
-        print("Sorry, no cheaper one-way routes")
+        print("Sorry, no cheaper one-way routes than regular price: $" + str(outPrice))
     # if there are results, print them out
     else:
         print("\n")
